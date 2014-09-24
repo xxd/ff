@@ -4,6 +4,9 @@ source 'https://rubygems.org'
 gem 'rails', '4.0.4'
 gem 'bootstrap-sass', '2.3.2.0'
 gem 'bcrypt'
+gem 'faker', '1.1.2'
+gem 'will_paginate', '3.0.4'
+gem 'bootstrap-will_paginate', '0.0.9'
 
 group :development, :test do
   gem 'sqlite3', '1.3.8'
@@ -29,9 +32,9 @@ group :doc do
   gem 'sdoc', require: false
 end
 
-# group :production do
-#   gem 'mysql2'
-# end
+group :production do
+  gem 'mysql2'
+end
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
