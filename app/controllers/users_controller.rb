@@ -2,12 +2,14 @@ class UsersController < ApplicationController
   before_action :signed_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user,   only: [:edit, :update]
   before_action :admin_user,     only: :destroy
-
+  respond_to :json, :html
+  
   def index
     @users = User.paginate(page: params[:page])
   end
   def show
 	  @user = User.find(params[:id])
+    respond_with(@user)
   end
   
   def new
