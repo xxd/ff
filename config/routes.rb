@@ -2,9 +2,15 @@ SampleApp::Application.routes.draw do
   # get "static_pages/home"
   # match '/', to: 'static_pages#home', via: 'get'
   # get "users/new"
-  resources :users
+  ##以下得到的 URL 地址应该是类似 /users/1/following 和 /users/1/followers 这种形式
+  resources :users do
+    member do
+      get :following, :followers
+    end
+  end
   resources :sessions, only: [:new, :create, :destroy]
   resources :microposts, only: [:create, :destroy]
+  resources :relationships, only: [:create, :destroy]
   root to: 'static_pages#home'
   match '/signup',  to: 'users#new',            via: 'get'
   match '/signin',  to: 'sessions#new',         via: 'get'
