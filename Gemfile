@@ -7,7 +7,9 @@ gem 'bcrypt'
 gem 'faker', '1.1.2'
 gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate', '0.0.9'
-gem 'capistrano', '2.4'
+# gem 'capistrano', '2.4'
+gem 'capistrano', '~> 3.2.0'
+gem 'unicorn'
 
 group :development, :test do
   gem 'sqlite3', '1.3.8'

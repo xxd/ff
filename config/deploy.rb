@@ -1,33 +1,105 @@
-set :application, "FingerFight"
+# config valid only for Capistrano 3.1
+lock '3.2.1'
+
+set :application, 'FingerFight'
+set :deploy_user, 'deploy_user'
+
+# setup repo details
+set :scm, :git
 set :repository,  "git@github.com:xxd/ff.git"
 
-# If you aren't deploying to /u/apps/#{application} on the target
-# servers (which is the default), you can specify the actual location
-# via the :deploy_to variable:
-set :deploy_to, "/prod/ff"
+# setup rvm.
+set :rbenv_type, :system
+set :rbenv_ruby, '2.1.5'
+set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
+set :rbenv_map_bins, %w{rake gem bundle ruby rails}
 
-# If you aren't using Subversion to manage your source code, specify
-# your SCM below:
-# set :scm, :subversion
-set :scm, :git
-set :user, "deploy_user"
-set :scm_passphrase, "deploy_user"
-set :use_sudo, false
-set :rails_env, "production"
-set :deploy_via, :copy
-set :ssh_options, { :forward_agent => true, :port => 4321 }
+
+# how many old releases do we want to keep
 set :keep_releases, 5
-default_run_options[:pty] = true
+# Default branch is :master
+# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
-task :production do
-  set  :rails_env,   :production
-  role :web,        "106.187.101.82"                         # Your HTTP server, Apache/etc
-  role :app,        "106.187.101.82"                         # This may be the same as your `Web` server
-  role :db,         "106.187.101.82", :primary => true       # This is where Rails migrations will run
-  set  :user,        "deploy_user"
-  set  :password,    "deploy_user"
-  set  :branch,      "master"
-  after "deploy", "sitemap:copy_old_sitemap"
-  after "deploy:restart", "rapns:reload"
-  puts " Deploying \033[1;41m  production... \033[0m"
+
+
+# files we want symlinking to specific entries in shared.
+set :linked_files, %w{config/database.yml}
+
+# dirs we want symlinking to shared
+set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+
+# what specs should be run before deployment is allowed to
+# continue, see lib/capistrano/tasks/run_tests.cap
+# set :tests, []
+
+# which config files should be copied by deploy:setup_config
+# see documentation in lib/capistrano/tasks/setup_config.cap
+# for details of operations
+set(:config_files, %w(
+  nginx.conf
+  database.example.yml
+  log_rotation
+  monit
+  unicorn.rb
+  unicorn_init.sh
+))
+
+# which config files should be made executable after copying
+# by deploy:setup_config
+set(:executable_config_files, %w(
+  unicorn_init.sh
+))
+
+# files which need to be symlinked to other parts of the
+# filesystem. For example nginx virtualhosts, log rotation
+# init scripts etc.
+set(:symlinks, [
+  {
+    source: "nginx.conf",
+    link: "/etc/nginx/sites-enabled/#{fetch(:full_app_name)}"
+  },
+  {
+    source: "unicorn_init.sh",
+    link: "/etc/init.d/unicorn_#{fetch(:full_app_name)}"
+  },
+  {
+    source: "log_rotation",
+   link: "/etc/logrotate.d/#{fetch(:full_app_name)}"
+  },
+  {
+    source: "monit",
+    link: "/etc/monit/conf.d/#{fetch(:full_app_name)}.conf"
+  }
+])
+
+
+# this:
+# http://www.capistranorb.com/documentation/getting-started/flow/
+# is worth reading for a quick overview of what tasks are called
+# and when for `cap stage deploy`
+
+namespace :deploy do
+  # make sure we're deploying what we think we're deploying
+  before :deploy, "deploy:check_revision"
+  # only allow a deploy with passing tests to deployed
+  before :deploy, "deploy:run_tests"
+  # compile assets locally then rsync
+  after 'deploy:symlink:shared', 'deploy:compile_assets_locally'
+  after :finishing, 'deploy:cleanup'
+
+  # remove the default nginx configuration as it will tend
+  # to conflict with our configs.
+  before 'deploy:setup_config', 'nginx:remove_default_vhost'
+
+  # reload nginx to it will pick up any modified vhosts from
+  # setup_config
+  after 'deploy:setup_config', 'nginx:reload'
+
+  # Restart monit so it will pick up any monit configurations
+  # we've added
+  after 'deploy:setup_config', 'monit:restart'
+
+  # As of Capistrano 3.1, the `deploy:restart` task is not called
+  # automatically.
+  after 'deploy:publishing', 'deploy:restart'
 end
