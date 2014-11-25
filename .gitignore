@@ -25,4 +25,4 @@ doc/
 bundler_stubs/
 /.secret 
 
-config/database.yml
+/config/database.yml
