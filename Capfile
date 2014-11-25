@@ -14,8 +14,8 @@ require 'capistrano/deploy'
 #   https://github.com/capistrano/bundler
 #   https://github.com/capistrano/rails
 #
-require 'capistrano/rvm'
-# require 'capistrano/rbenv' # include the rbenv helpers which ensure the rbenv specified ruby is used when executing commands remotely rather than the system default
+# require 'capistrano/rvm'
+require 'capistrano/rbenv' # include the rbenv helpers which ensure the rbenv specified ruby is used when executing commands remotely rather than the system default
 # require 'capistrano/chruby'
 require 'capistrano/bundler' #Which will include the capistrano bundler tasks to ensure gems are automatically installed when you deploy.
 require 'capistrano/rails/assets'

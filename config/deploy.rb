@@ -14,10 +14,10 @@ set :keep_releases, 5
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
 # # setup rvm.
-# set :rbenv_type, :system
-# set :rbenv_ruby, '2.1.5'
-# set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
-# set :rbenv_map_bins, %w{rake gem bundle ruby rails}
+set :rbenv_type, :system
+set :rbenv_ruby, '2.1.5'
+set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
+set :rbenv_map_bins, %w{rake gem bundle ruby rails}
 
 # files we want symlinking to specific entries in shared
 set :linked_files, %w{config/database.yml config/application.yml config/secrets.yml}
