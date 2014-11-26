@@ -10,13 +10,10 @@ gem 'bootstrap-will_paginate', '0.0.9'
 # gem 'capistrano', '2.4'
 
 # Use Capistrano for deployment
-gem 'capistrano', '~> 3.2.0', require: false, group: :development
+gem 'capistrano', '~> 3.2.0'
 gem 'capistrano-rvm'
- 
-group :development do
-  gem 'capistrano-rails' require: false
-  gem 'capistrano-bundler' require: false
-end
+gem 'capistrano-rails'
+gem 'capistrano-bundler'
 
 gem 'unicorn'
 
