@@ -41,8 +41,9 @@ namespace :deploy do
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
       # Restarts Phusion Passenger
-      execute :touch, release_path.join('tmp/restart.txt')
-      run "kill -s USR2 `cat #{unicorn_pid}`"
+      # execute :touch, release_path.join('tmp/restart.txt')
+      # run "kill -s USR2 `cat #{unicorn_pid}`"
+      run "bundle exec unicorn_rails -c /prod/FingerFight/current/config/unicorn.rb -E production -D"
     end
   end
  
