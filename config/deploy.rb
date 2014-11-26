@@ -10,7 +10,7 @@ set :use_sudo, false
 
 # setup repo details
 set :scm, :git
-set :repository,  "git@github.com:xxd/ff.git"
+set :repo_url,  "git@github.com:xxd/ff.git"
 set :branch, "master"
 set :deploy_via, :remote_cache
 
