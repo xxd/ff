@@ -43,7 +43,7 @@ namespace :deploy do
       # Restarts Phusion Passenger
       # execute :touch, release_path.join('tmp/restart.txt')
       # run "kill -s USR2 `cat #{unicorn_pid}`"
-      run "bundle exec unicorn_rails -c /prod/FingerFight/current/config/unicorn.rb -E production -D"
+      sh "cd #{Rails.root} && bundle exec unicorn_rails -c /prod/FingerFight/current/config/unicorn.rb -E production -D"
     end
   end
  
