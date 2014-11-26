@@ -19,7 +19,7 @@ set :stages, ["production"]
 set :keep_releases, 5
 
 set :deploy_to, '/prod/FingerFight'
-
+set :unicorn_pid, "#{deploy_to}/current/tmp/pids/unicorn.pid"
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
@@ -42,6 +42,7 @@ namespace :deploy do
     on roles(:app), in: :sequence, wait: 5 do
       # Restarts Phusion Passenger
       execute :touch, release_path.join('tmp/restart.txt')
+      run "kill -s USR2 `cat #{unicorn_pid}`"
     end
   end
  

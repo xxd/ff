@@ -8,6 +8,7 @@ gem 'faker', '1.1.2'
 gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate', '0.0.9'
 # gem 'capistrano', '2.4'
+gem 'rake'
 
 # Use Capistrano for deployment
 gem 'capistrano', '~> 3.2.0'

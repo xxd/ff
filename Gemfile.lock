@@ -195,6 +195,7 @@ DEPENDENCIES
   jquery-rails (= 2.2.1)
   mysql2
   rails (= 4.0.4)
+  rake
   rspec-rails (= 2.13.1)
   sass-rails (~> 4.0.2)
   sdoc
