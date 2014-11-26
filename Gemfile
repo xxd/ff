@@ -8,11 +8,15 @@ gem 'faker', '1.1.2'
 gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate', '0.0.9'
 # gem 'capistrano', '2.4'
-gem 'capistrano', '~> 3.2.0'
+
+# Use Capistrano for deployment
+gem 'capistrano', '~> 3.2.0', require: false, group: :development
 gem 'capistrano-rvm'
-gem 'capistrano-bundler'
-gem 'capistrano-rails'
-gem 'capistrano-rbenv', '~> 2.0'
+ 
+group :development do
+  gem 'capistrano-rails' require: false
+  gem 'capistrano-bundler' require: false
+end
 
 gem 'unicorn'
 

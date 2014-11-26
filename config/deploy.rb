@@ -1,32 +1,61 @@
+# Ensure that bundle is used for rake tasks
+SSHKit.config.command_map[:rake] = "bundle exec rake"
+
 # config valid only for Capistrano 3.1
 lock '3.2.1'
 
 set :application, 'FingerFight'
-set :deploy_user, 'deploy_user'
+set :deploy_user, 'root'
+set :use_sudo, false
 
 # setup repo details
 set :scm, :git
 set :repository,  "git@github.com:xxd/ff.git"
+set :branch, "master"
+set :deploy_via, :remote_cache
 
+set :stages, ["production"]
 # how many old releases do we want to keep
 set :keep_releases, 5
+
+set :deploy_to, '/prod/FingerFight'
+
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
 # # setup rvm.
-set :rbenv_type, :system
-set :rbenv_ruby, '2.1.5'
-set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
-set :rbenv_map_bins, %w{rake gem bundle ruby rails}
+# set :rbenv_type, :system
+# set :rbenv_ruby, '2.1.5'
+# set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
+# set :rbenv_map_bins, %w{rake gem bundle ruby rails}
 
 # files we want symlinking to specific entries in shared
-set :linked_files, %w{config/database.yml config/application.yml config/secrets.yml}
+# set :linked_files, %w{config/database.yml config/application.yml config/secrets.yml}
 
 # dirs we want symlinking to shared
-set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+# set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 namespace :deploy do
-  after :finishing, 'deploy:cleanup'
+ 
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      # Restarts Phusion Passenger
+      execute :touch, release_path.join('tmp/restart.txt')
+    end
+  end
+ 
+  after :publishing, :restart
+ 
+  after :restart, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      # Here we can do anything such as:
+      # within release_path do
+      #   execute :rake, 'cache:clear'
+      # end
+    end
+  end
+ 
 end
 
 # # dirs we want symlinking to shared
