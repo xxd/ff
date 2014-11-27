@@ -2,10 +2,10 @@ app = "FingerFight"
 worker_processes 4
 preload_app false
 timeout 30
-listen 8080, :tcp_nopush => true
-app_path = "/prod/#{app}"
+# listen 3008, :tcp_nopush => true
+app_path = "/prod/#{app}/current"
 listen "/tmp/unicorn.#{app}.sock", :backlog => 64
-pid "#{app_path}/tmp/pids/unicorn.pid"
+pid "#{app_path}/tmp/pids/unicorn-#{app_path}.pid"
 stderr_path "#{app_path}/log/unicorn.stderr.log"
 stdout_path "#{app_path}/log/unicorn.stdout.log"
 # combine Ruby 2.0.0dev or REE with "preload_app true" for memory savings
