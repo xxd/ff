@@ -3,6 +3,7 @@ worker_processes 4
 preload_app false
 timeout 30
 # listen 3008, :tcp_nopush => true
+listen 3008
 app_path = "/prod/#{app}/current"
 listen "/tmp/unicorn.#{app}.sock", :backlog => 64
 pid "#{app_path}/tmp/pids/unicorn-#{app}.pid"
